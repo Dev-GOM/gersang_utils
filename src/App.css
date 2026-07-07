@@ -262,8 +262,197 @@ tbody tr:nth-child(even) {
   color: #7f8c8d;
 }
 
+/* 프리셋 저장 버튼 */
+button.preset-save-btn {
+  background: #9b59b6;
+  margin-top: 8px;
+}
+
+button.preset-save-btn:hover {
+  background: #8e44ad;
+}
+
+/* 아이템 프리셋 박스 */
+.preset-box {
+  background: #f8f9ff;
+  border-color: #d6eaf8;
+}
+
+.empty-preset {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.preset-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #e1e8ed;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.preset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.preset-name {
+  font-weight: bold;
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.preset-detail {
+  font-size: 11px;
+  color: #7f8c8d;
+}
+
+.preset-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.preset-actions button {
+  width: auto;
+  padding: 5px 8px;
+  font-size: 11px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.preset-actions .apply-btn {
+  background: #27ae60;
+}
+
+.preset-actions .apply-btn:hover {
+  background: #219150;
+}
+
+.preset-actions .add-btn {
+  background: #3498db;
+}
+
+.preset-actions .add-btn:hover {
+  background: #2980b9;
+}
+
+/* 장부 스냅샷 */
+.snapshot-box {
+  background: #fffbf2;
+  border-color: #fdebd0;
+  margin-bottom: 15px;
+}
+
+.snapshot-input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.snapshot-input-group input {
+  flex: 1;
+}
+
+.snapshot-input-group button {
+  width: auto;
+  padding: 8px 14px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.snapshot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.snapshot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #f0d5a8;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.snapshot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.snapshot-name {
+  font-weight: bold;
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.snapshot-date,
+.snapshot-count {
+  font-size: 11px;
+  color: #7f8c8d;
+}
+
+.snapshot-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.snapshot-actions button {
+  width: auto;
+  padding: 5px 8px;
+  font-size: 11px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.snapshot-actions .apply-btn {
+  background: #27ae60;
+}
+
+.snapshot-actions .apply-btn:hover {
+  background: #219150;
+}
+
 @media (max-width: 960px) {
   .right-panel {
     min-width: 100%;
   }
+
+  .preset-chip,
+  .snapshot-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .preset-actions,
+  .snapshot-actions {
+    width: 100%;
+  }
+
+  .preset-actions button,
+  .snapshot-actions button {
+    flex: 1;
+  }
 }
+
