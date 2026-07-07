@@ -35,6 +35,18 @@ function saveToStorage(key, value) {
   }
 }
 
+function downloadJson(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 function App() {
   const [records, setRecords] = useState([])
 
@@ -49,6 +61,8 @@ function App() {
   const [cash2, setCash2] = useState('')
   const [ratio2, setRatio2] = useState('')
 
+
+
   // 프리셋 / 스냅샷
   const [itemPresets, setItemPresets] = useState(() =>
     loadFromStorage(ITEM_PRESETS_KEY, [])
@@ -57,6 +71,11 @@ function App() {
     loadFromStorage(LEDGER_SNAPSHOTS_KEY, [])
   )
   const [snapshotName, setSnapshotName] = useState('')
+
+  // 모달 상태
+  const [showPresetModal, setShowPresetModal] = useState(false)
+  const [showLedgerModal, setShowLedgerModal] = useState(false)
+  const [showDataModal, setShowDataModal] = useState(false)
 
   useEffect(() => {
     saveToStorage(ITEM_PRESETS_KEY, itemPresets)
@@ -256,6 +275,54 @@ function App() {
     }
   }
 
+  // 파일 저장/불러오기
+  function exportAllData() {
+    const data = {
+      itemPresets,
+      snapshots,
+      exportedAt: new Date().toISOString(),
+    }
+    const dateStr = new Date().toISOString().slice(0, 10)
+    downloadJson(data, `gersang-calculator-backup-${dateStr}.json`)
+  }
+
+  function importAllData(file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result)
+        if (!Array.isArray(data.itemPresets) || !Array.isArray(data.snapshots)) {
+          alert('올바른 백업 파일 형식이 아닙니다.')
+          return
+        }
+        const countMsg = `아이템 프리셋 ${data.itemPresets.length}개, 장부 스냅샷 ${data.snapshots.length}개를 불러오시겠습니까?`
+        const overwrite = confirm(`${countMsg}\n확인을 누르면 기존 데이터를 덮어쓰고, 취소를 누르면 기존 데이터에 추가합니다.`)
+
+        const now = Date.now()
+        const importedPresets = data.itemPresets.map((p, idx) => ({
+          ...p,
+          id: now + idx,
+        }))
+        const importedSnapshots = data.snapshots.map((s, idx) => ({
+          ...s,
+          id: now + data.itemPresets.length + idx,
+        }))
+
+        if (overwrite) {
+          setItemPresets(importedPresets)
+          setSnapshots(importedSnapshots)
+        } else {
+          setItemPresets((prev) => [...prev, ...importedPresets])
+          setSnapshots((prev) => [...prev, ...importedSnapshots])
+        }
+        alert('데이터를 불러왔습니다.')
+      } catch (err) {
+        alert('파일을 읽는 데 실패했습니다. 파일을 확인해주세요.')
+      }
+    }
+    reader.readAsText(file)
+  }
+
   // 장부 스냅샷
   function saveSnapshot() {
     const name = snapshotName.trim()
@@ -303,179 +370,127 @@ function App() {
 
   return (
     <>
-      <h2>💰 거상 캐시 거래 장부</h2>
+      <header className="main-header">
+        <h2>거상 캐시 거래 장부</h2>
+      </header>
 
       <div className="wrapper">
         <div className="left-panel">
-          <div className="box">
-            <h3>1. 게임머니 단가로 추가 (캐시 도매/구매)</h3>
-            <div className="input-group">
-              <div>
-                <label>아이템명 (선택)</label>
-                <input
-                  type="text"
-                  value={name1}
-                  onChange={(e) => setName1(e.target.value)}
-                  placeholder="예: 백호의단지"
-                />
-              </div>
-              <div>
-                <label>개수 (기본 1)</label>
-                <input
-                  type="number"
-                  value={qty1}
-                  onChange={(e) => setQty1(e.target.value)}
-                  min="1"
-                />
-              </div>
-            </div>
-            <div className="input-group">
-              <div>
-                <label>개당 게임머니 (억)</label>
-                <input
-                  type="number"
-                  value={gold1}
-                  onChange={(e) => setGold1(e.target.value)}
-                  step="0.01"
-                  placeholder="예: 4.5"
-                />
-              </div>
-              <div>
-                <label>시세 비율 (만당 억)</label>
-                <input
-                  type="number"
-                  value={ratio1}
-                  onChange={(e) => setRatio1(e.target.value)}
-                  step="0.1"
-                  placeholder="예: 3.2"
-                />
-              </div>
-            </div>
-            <button onClick={addCashItem}>장부에 추가하기</button>
-            <button className="preset-save-btn" onClick={() => saveItemPreset('cash')}>
-              현재 입력을 프리셋으로 저장
-            </button>
+          <div className="tabs">
+            <button className="active">입력</button>
           </div>
 
           <div className="box">
-            <h3>2. 캐시 단가로 추가 (캐시 판매/현질)</h3>
-            <div className="input-group">
-              <div>
-                <label>아이템명 (선택)</label>
-                <input
-                  type="text"
-                  value={name2}
-                  onChange={(e) => setName2(e.target.value)}
-                  placeholder="예: 각성석"
-                />
-              </div>
-              <div>
-                <label>개수 (기본 1)</label>
-                <input
-                  type="number"
-                  value={qty2}
-                  onChange={(e) => setQty2(e.target.value)}
-                  min="1"
-                />
-              </div>
-            </div>
-            <div className="input-group">
-              <div>
-                <label>개당 캐시 (원)</label>
-                <input
-                  type="number"
-                  value={cash2}
-                  onChange={(e) => setCash2(e.target.value)}
-                  placeholder="예: 15000"
-                />
-              </div>
-              <div>
-                <label>시세 비율 (만당 억)</label>
-                <input
-                  type="number"
-                  value={ratio2}
-                  onChange={(e) => setRatio2(e.target.value)}
-                  step="0.1"
-                  placeholder="예: 3.2"
-                />
-              </div>
-            </div>
-            <button onClick={addGoldItem}>장부에 추가하기</button>
-            <button className="preset-save-btn" onClick={() => saveItemPreset('gold')}>
-              현재 입력을 프리셋으로 저장
-            </button>
-          </div>
-
-          <div className="box preset-box">
-            <h3>⭐ 자주 쓰는 아이템 프리셋</h3>
-            {itemPresets.length === 0 ? (
-              <p className="empty-preset">위 입력란에서 값을 입력한 뒤 "프리셋으로 저장" 버튼을 눌러보세요.</p>
-            ) : (
-              <div className="preset-list">
-                {itemPresets.map((preset) => (
-                  <div key={preset.id} className="preset-chip">
-                    <div className="preset-info">
-                      <span className="preset-name">{preset.name}</span>
-                      <span className="preset-detail">
-                        {preset.type === 'cash'
-                          ? `${preset.value}억 / 비율 ${preset.ratio}`
-                          : `${preset.value.toLocaleString()}원 / 비율 ${preset.ratio}`}
-                      </span>
-                    </div>
-                    <div className="preset-actions">
-                      <button className="apply-btn" onClick={() => applyItemPreset(preset)}>
-                        불러오기
-                      </button>
-                      <button className="add-btn" onClick={() => addFromPreset(preset)}>
-                        추가
-                      </button>
-                      <button className="delete-btn" onClick={() => deleteItemPreset(preset.id)}>
-                        삭제
-                      </button>
-                    </div>
+                <h3>1. 지전으로 캐시 구매</h3>
+                <div className="input-group">
+                  <div>
+                    <label>아이템명 (선택)</label>
+                    <input
+                      type="text"
+                      value={name1}
+                      onChange={(e) => setName1(e.target.value)}
+                      placeholder="예: 백호의단지"
+                    />
                   </div>
-                ))}
+                  <div>
+                    <label>개수 (기본 1)</label>
+                    <input
+                      type="number"
+                      value={qty1}
+                      onChange={(e) => setQty1(e.target.value)}
+                      min="1"
+                    />
+                  </div>
+                </div>
+                <div className="input-group">
+                  <div>
+                    <label>개당 게임머니 (억)</label>
+                    <input
+                      type="number"
+                      value={gold1}
+                      onChange={(e) => setGold1(e.target.value)}
+                      step="0.01"
+                      placeholder="예: 4.5"
+                    />
+                  </div>
+                  <div>
+                    <label>시세 비율 (만당 억)</label>
+                    <input
+                      type="number"
+                      value={ratio1}
+                      onChange={(e) => setRatio1(e.target.value)}
+                      step="0.1"
+                      placeholder="예: 3.2"
+                    />
+                  </div>
+                </div>
+                <button onClick={addCashItem}>장부에 추가하기</button>
+                <button className="preset-save-btn" onClick={() => saveItemPreset('cash')}>
+                  현재 입력을 저장
+                </button>
               </div>
-            )}
-          </div>
+
+              <div className="box">
+                <h3>2. 캐시로 지전 구매</h3>
+                <div className="input-group">
+                  <div>
+                    <label>아이템명 (선택)</label>
+                    <input
+                      type="text"
+                      value={name2}
+                      onChange={(e) => setName2(e.target.value)}
+                      placeholder="예: 각성석"
+                    />
+                  </div>
+                  <div>
+                    <label>개수 (기본 1)</label>
+                    <input
+                      type="number"
+                      value={qty2}
+                      onChange={(e) => setQty2(e.target.value)}
+                      min="1"
+                    />
+                  </div>
+                </div>
+                <div className="input-group">
+                  <div>
+                    <label>개당 캐시 (원)</label>
+                    <input
+                      type="number"
+                      value={cash2}
+                      onChange={(e) => setCash2(e.target.value)}
+                      placeholder="예: 15000"
+                    />
+                  </div>
+                  <div>
+                    <label>시세 비율 (만당 억)</label>
+                    <input
+                      type="number"
+                      value={ratio2}
+                      onChange={(e) => setRatio2(e.target.value)}
+                      step="0.1"
+                      placeholder="예: 3.2"
+                    />
+                  </div>
+                </div>
+                <button onClick={addGoldItem}>장부에 추가하기</button>
+                <button className="preset-save-btn" onClick={() => saveItemPreset('gold')}>
+                  현재 입력을 저장
+                </button>
+              </div>
+
+              <button className="data-manage-btn" onClick={() => setShowDataModal(true)}>
+                데이터 관리
+              </button>
         </div>
 
         <div className="right-panel">
-          <div className="box snapshot-box">
-            <h3>💾 장부 저장 / 불러오기</h3>
-            <div className="snapshot-input-group">
-              <input
-                type="text"
-                value={snapshotName}
-                onChange={(e) => setSnapshotName(e.target.value)}
-                placeholder="예: 7/7 거래 장부"
-              />
-              <button onClick={saveSnapshot}>현재 장부 저장</button>
-            </div>
-            {snapshots.length > 0 && (
-              <div className="snapshot-list">
-                {snapshots.map((snapshot) => (
-                  <div key={snapshot.id} className="snapshot-item">
-                    <div className="snapshot-info">
-                      <span className="snapshot-name">{snapshot.name}</span>
-                      <span className="snapshot-date">{formatDate(snapshot.createdAt)}</span>
-                      <span className="snapshot-count">{snapshot.records.length}건</span>
-                    </div>
-                    <div className="snapshot-actions">
-                      <button className="apply-btn" onClick={() => loadSnapshot(snapshot.id)}>
-                        불러오기
-                      </button>
-                      <button className="delete-btn" onClick={() => deleteSnapshot(snapshot.id)}>
-                        삭제
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="panel-header">
+            <h3>장부 상세</h3>
+            <button className="header-btn" onClick={() => setShowLedgerModal(true)}>
+              장부 관리
+            </button>
           </div>
-
-          <h3>📋 거래 리스트 상세</h3>
           <div className="table-wrap">
             <table>
               <thead>
@@ -527,7 +542,7 @@ function App() {
                             onClick={() => changeQty(item.id, -1)}
                             aria-label="감소"
                           >
-                            ❮
+                            &lt;
                           </button>
                           <input
                             type="number"
@@ -541,7 +556,7 @@ function App() {
                             onClick={() => changeQty(item.id, 1)}
                             aria-label="증가"
                           >
-                            ❯
+                            &gt;
                           </button>
                         </div>
                       </td>
@@ -577,6 +592,160 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* 프리셋 관리 모달 */}
+      {showPresetModal && (
+        <div className="modal-overlay" onClick={() => setShowPresetModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>프리셋 관리</h3>
+              <button className="modal-close" onClick={() => setShowPresetModal(false)}>
+                X
+              </button>
+            </div>
+            <div className="modal-body">
+              {itemPresets.length === 0 ? (
+                <p className="empty-preset">저장된 프리셋이 없습니다.</p>
+              ) : (
+                <div className="preset-list modal-preset-list">
+                  {itemPresets.map((preset) => (
+                    <div key={preset.id} className="preset-chip">
+                      <div className="preset-info">
+                        <span className="preset-name">{preset.name}</span>
+                        <span className="preset-detail">
+                          {preset.type === 'cash'
+                            ? `${preset.value}억 / 비율 ${preset.ratio}`
+                            : `${preset.value.toLocaleString()}원 / 비율 ${preset.ratio}`}
+                        </span>
+                      </div>
+                      <div className="preset-actions">
+                        <button className="apply-btn" onClick={() => { applyItemPreset(preset); setShowPresetModal(false) }}>
+                          불러오기
+                        </button>
+                        <button className="add-btn" onClick={() => { addFromPreset(preset); setShowPresetModal(false) }}>
+                          추가
+                        </button>
+                        <button className="delete-btn" onClick={() => deleteItemPreset(preset.id)}>
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="secondary-btn" onClick={() => setShowPresetModal(false)}>
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 장부 관리 모달 */}
+      {showLedgerModal && (
+        <div className="modal-overlay" onClick={() => setShowLedgerModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>장부 관리</h3>
+              <button className="modal-close" onClick={() => setShowLedgerModal(false)}>
+                X
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="snapshot-input-group">
+                <input
+                  type="text"
+                  value={snapshotName}
+                  onChange={(e) => setSnapshotName(e.target.value)}
+                  placeholder="예: 7/7 거래 장부"
+                />
+                <button onClick={saveSnapshot}>현재 장부 저장</button>
+              </div>
+              {snapshots.length === 0 ? (
+                <p className="empty-preset">저장된 장부가 없습니다.</p>
+              ) : (
+                <div className="snapshot-list">
+                  {snapshots.map((snapshot) => (
+                    <div key={snapshot.id} className="snapshot-item">
+                      <div className="snapshot-info">
+                        <span className="snapshot-name">{snapshot.name}</span>
+                        <span className="snapshot-date">{formatDate(snapshot.createdAt)}</span>
+                        <span className="snapshot-count">{snapshot.records.length}건</span>
+                      </div>
+                      <div className="snapshot-actions">
+                        <button className="apply-btn" onClick={() => { loadSnapshot(snapshot.id); setShowLedgerModal(false) }}>
+                          불러오기
+                        </button>
+                        <button className="delete-btn" onClick={() => deleteSnapshot(snapshot.id)}>
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="secondary-btn" onClick={() => setShowLedgerModal(false)}>
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 데이터 관리 모달 */}
+      {showDataModal && (
+        <div className="modal-overlay" onClick={() => setShowDataModal(false)}>
+          <div className="modal-content data-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>데이터 관리</h3>
+              <button className="modal-close" onClick={() => setShowDataModal(false)}>
+                X
+              </button>
+            </div>
+            <div className="modal-body data-modal-body">
+              <div className="data-section">
+                <h4>관리</h4>
+                <button onClick={() => { setShowDataModal(false); setShowPresetModal(true) }}>
+                  프리셋 관리
+                </button>
+                <button onClick={() => { setShowDataModal(false); setShowLedgerModal(true) }}>
+                  장부 관리
+                </button>
+              </div>
+              <div className="data-section">
+                <h4>파일</h4>
+                <button className="export-btn" onClick={() => { exportAllData(); setShowDataModal(false) }}>
+                  파일로 저장
+                </button>
+                <label className="import-label">
+                  <span>파일 불러오기</span>
+                  <input
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        importAllData(file)
+                        setShowDataModal(false)
+                      }
+                      e.target.value = ''
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="secondary-btn" onClick={() => setShowDataModal(false)}>
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

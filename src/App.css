@@ -1,7 +1,24 @@
-h2 {
-  text-align: center;
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1300px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+}
+
+.main-header h2 {
   color: #2c3e50;
-  margin-bottom: 25px;
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-btn {
+  width: auto;
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 /* 좌우 분할 레이아웃 */
@@ -32,6 +49,63 @@ h2 {
   min-width: 600px;
   display: flex;
   flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-header h3 {
+  margin: 0;
+}
+
+/* 좌측 탭 */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 15px;
+  background: #eef2f5;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 8px 4px;
+  margin: 0;
+  background: transparent;
+  color: #555;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.tabs button:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.tabs button.active {
+  background: #fff;
+  color: #2c3e50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.data-manage-btn {
+  background: #5d6d7e;
+  margin-top: 10px;
+}
+
+.data-manage-btn:hover {
+  background: #4a5866;
+}
+
+.tab-desc {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin: -5px 0 12px 0;
+  line-height: 1.5;
 }
 
 /* 입력 박스 스타일 */
@@ -272,10 +346,144 @@ button.preset-save-btn:hover {
   background: #8e44ad;
 }
 
-/* 아이템 프리셋 박스 */
-.preset-box {
-  background: #f8f9ff;
-  border-color: #d6eaf8;
+/* 데이터 관리 박스 */
+button.export-btn {
+  background: #f39c12;
+  margin-top: 8px;
+}
+
+button.export-btn:hover {
+  background: #d68910;
+}
+
+.import-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  background: #1abc9c;
+  color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.import-label:hover {
+  background: #16a085;
+}
+
+.import-label input {
+  display: none;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.modal-header h3 {
+  margin: 0;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 10px 20px 0;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.modal-tabs button {
+  flex: 1;
+  padding: 8px;
+  margin: 0;
+  background: transparent;
+  color: #555;
+  border-radius: 6px 6px 0 0;
+  border-bottom: 2px solid transparent;
+}
+
+.modal-tabs button:hover {
+  background: #f8f9fa;
+}
+
+.modal-tabs button.active {
+  background: #fff;
+  color: #2c3e50;
+  border-bottom-color: #3498db;
+}
+
+.modal-close {
+  width: auto;
+  padding: 4px 10px;
+  margin: 0;
+  background: transparent;
+  color: #7f8c8d;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: #f1f2f6;
+  color: #2c3e50;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer button {
+  width: auto;
+  padding: 8px 18px;
+  margin: 0;
+}
+
+button.secondary-btn {
+  background: #95a5a6;
+}
+
+button.secondary-btn:hover {
+  background: #7f8c8d;
 }
 
 .empty-preset {
@@ -283,13 +491,69 @@ button.preset-save-btn:hover {
   color: #7f8c8d;
   margin: 0;
   padding: 10px 0;
+  text-align: center;
+}
+
+.file-modal,
+.data-modal {
+  max-width: 360px;
+}
+
+.file-modal-body,
+.data-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.data-section {
+  background: #f8f9fa;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.data-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #555;
+  font-weight: bold;
+}
+
+.data-section button {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.data-section button:last-child,
+.data-section .import-label:last-child {
+  margin-bottom: 0;
+}
+
+.data-section .import-label {
+  margin-top: 0;
+}
+
+.file-desc {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 0 0 5px;
+  text-align: center;
+}
+
+.file-modal-body .export-btn,
+.data-modal-body .export-btn {
+  margin-top: 0;
 }
 
 .preset-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 10px;
+}
+
+.modal-preset-list {
+  margin-top: 0;
 }
 
 .preset-chip {
@@ -297,28 +561,28 @@ button.preset-save-btn:hover {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  background: #fff;
+  background: #fafafa;
   border: 1px solid #e1e8ed;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 10px 12px;
 }
 
 .preset-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
   min-width: 0;
 }
 
 .preset-name {
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
   color: #2c3e50;
 }
 
 .preset-detail {
-  font-size: 11px;
+  font-size: 12px;
   color: #7f8c8d;
 }
 
@@ -329,8 +593,8 @@ button.preset-save-btn:hover {
 
 .preset-actions button {
   width: auto;
-  padding: 5px 8px;
-  font-size: 11px;
+  padding: 6px 10px;
+  font-size: 12px;
   margin-top: 0;
   white-space: nowrap;
 }
