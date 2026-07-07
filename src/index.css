@@ -1,0 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Malgun Gothic', sans-serif;
+  background: #f4f6f9;
+  padding: 20px;
+  color: #333;
+  margin: 0;
+}

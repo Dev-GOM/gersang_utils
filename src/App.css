@@ -1,0 +1,269 @@
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+/* 좌우 분할 레이아웃 */
+.wrapper {
+  display: flex;
+  gap: 20px;
+  max-width: 1300px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.left-panel,
+.right-panel {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.left-panel {
+  flex: 1;
+  min-width: 320px;
+  max-width: 400px;
+}
+
+.right-panel {
+  flex: 2;
+  min-width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 입력 박스 스타일 */
+.box {
+  background: #fafafa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e1e8ed;
+}
+
+h3 {
+  margin-top: 0;
+  font-size: 15px;
+  color: #34495e;
+  border-left: 4px solid #3498db;
+  padding-left: 8px;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.input-group > div {
+  flex: 1;
+}
+
+label {
+  display: block;
+  margin: 5px 0;
+  font-size: 12px;
+  font-weight: bold;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+button.delete-btn {
+  background: #e74c3c;
+  padding: 6px;
+  font-size: 12px;
+  margin-top: 0;
+}
+
+button.delete-btn:hover {
+  background: #c0392b;
+}
+
+/* 우측 테이블 스타일 */
+.table-wrap {
+  flex-grow: 1;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+th,
+td {
+  border: 1px solid #ecf0f1;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 테이블 헤더 (진한 남색 배경 유지) */
+th {
+  background: #34495e;
+  color: white;
+  white-space: nowrap;
+}
+
+th.sub-header {
+  background: #2c3e50;
+}
+
+tbody tr:nth-child(even) {
+  background: #fdfdfd;
+}
+
+/* 개수 조절 화살표 및 입력창 스타일 */
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.qty-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  margin: 0;
+  background: #f1f2f6;
+  border: 1px solid #ced6e0;
+  border-radius: 4px;
+  color: #2f3542;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.qty-btn:hover {
+  background: #dfe4ea;
+  border-color: #a4b0be;
+}
+
+.qty-btn:active {
+  transform: scale(0.95);
+}
+
+.qty-input {
+  width: 45px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* 넘버 인풋 스핀 버튼 숨기기 */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qty-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* 데이터 하이라이트 색상 */
+.text-cash {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.text-gold {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.bg-light-gray {
+  background-color: #f8f9fa;
+}
+
+/* 총액 하단 바 */
+.total-box {
+  margin-top: auto;
+  padding: 15px;
+  background: #e8f4fd;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.total-box span {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.total-box .total-cash span {
+  color: #c0392b;
+}
+
+.total-box .total-gold span {
+  color: #27ae60;
+}
+
+/* 빈 리스트 안내 */
+.empty-msg {
+  text-align: center;
+  color: #95a5a6;
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+.type-badge {
+  font-size: 11px;
+  background: #eee;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.item-name {
+  font-weight: bold;
+}
+
+.ratio {
+  color: #7f8c8d;
+}
+
+@media (max-width: 960px) {
+  .right-panel {
+    min-width: 100%;
+  }
+}
