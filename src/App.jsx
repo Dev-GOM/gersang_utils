@@ -190,6 +190,32 @@ function App() {
     )
   }
 
+  function updateRatio(id, value) {
+    const newRatio = parseFloat(value)
+    if (isNaN(newRatio) || newRatio <= 0) return
+
+    setRecords((prev) =>
+      prev.map((item) => {
+        if (item.id !== id) return item
+        let newUnitCash = item.unitCash
+        let newUnitGold = item.unitGold
+        if (item.type === '머니 기준') {
+          newUnitCash = (item.unitGold / newRatio) * 10000
+        } else {
+          newUnitGold = (item.unitCash / 10000) * newRatio
+        }
+        return {
+          ...item,
+          ratio: newRatio,
+          unitCash: newUnitCash,
+          unitGold: newUnitGold,
+          cashValue: newUnitCash * item.qty,
+          goldValue: newUnitGold * item.qty,
+        }
+      })
+    )
+  }
+
   function removeItem(id) {
     setRecords((prev) => prev.filter((item) => item.id !== id))
   }
@@ -528,7 +554,15 @@ function App() {
                         <span className="type-badge">{item.type}</span>
                       </td>
                       <td className="item-name">{item.name}</td>
-                      <td className="ratio">{item.ratio}</td>
+                      <td className="ratio">
+                        <input
+                          type="number"
+                          className="ratio-input"
+                          value={item.ratio}
+                          step="0.1"
+                          onChange={(e) => updateRatio(item.id, e.target.value)}
+                        />
+                      </td>
                       <td className="text-cash">
                         {Math.round(item.unitCash).toLocaleString()}원
                       </td>

@@ -336,6 +336,25 @@ tbody tr:nth-child(even) {
   color: #7f8c8d;
 }
 
+.ratio-input {
+  width: 55px;
+  padding: 4px;
+  text-align: center;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ratio-input::-webkit-outer-spin-button,
+.ratio-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ratio-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 /* 프리셋 저장 버튼 */
 button.preset-save-btn {
   background: #9b59b6;
